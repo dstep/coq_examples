@@ -40,6 +40,27 @@ proj1_sig e =
 sub :: Prelude.Integer -> Prelude.Integer -> Prelude.Integer
 sub = (\n m -> Prelude.max 0 (n Prelude.- m))
 
+data Positive =
+   XI Positive
+ | XO Positive
+ | XH
+
+data Z =
+   Z0
+ | Zpos Positive
+ | Zneg Positive
+
+iter_op :: (a1 -> a1 -> a1) -> Positive -> a1 -> a1
+iter_op op p a =
+  case p of {
+   XI p0 -> op a (iter_op op p0 (op a a));
+   XO p0 -> iter_op op p0 (op a a);
+   XH -> a}
+
+to_nat :: Positive -> Prelude.Integer
+to_nat x =
+  iter_op (Prelude.+) x (Prelude.succ 0)
+
 append :: Prelude.String -> Prelude.String -> Prelude.String
 append s1 s2 =
   case s1 of {
@@ -220,6 +241,13 @@ nat_to_str x =
       n)
     x
 
+z_to_str :: Z -> Prelude.String
+z_to_str z =
+  case z of {
+   Z0 -> (:) '0' ([]);
+   Zpos x -> nat_to_str (to_nat x);
+   Zneg x -> (:) '-' (nat_to_str (to_nat x))}
+
 type TypeForFormatString = Any
 
 printf_ :: Prelude.String -> Prelude.String -> TypeForFormatString
@@ -256,7 +284,7 @@ printf_ s pref =
                    Prelude.False ->
                     case b6 of {
                      Prelude.True -> printf_ xs (append pref ((:) x ([])));
-                     Prelude.False -> unsafeCoerce (\x0 -> printf_ xs (append pref (nat_to_str x0)))}};
+                     Prelude.False -> unsafeCoerce (\x0 -> printf_ xs (append pref (z_to_str x0)))}};
                  Prelude.False -> printf_ xs (append pref ((:) x ([])))}}}};
          Prelude.False ->
           case b1 of {

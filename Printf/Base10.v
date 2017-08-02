@@ -104,3 +104,13 @@ Qed.
 Obligation 2.
 intuition.
 Qed.
+
+Require Import ZArith.
+
+Definition z_to_str (z:Z) : string :=
+match z with
+| Z0 => "0"
+| Zpos x => nat_to_str (Pos.to_nat x)
+| Zneg x => String "-" (nat_to_str (Pos.to_nat x))
+end.
+
