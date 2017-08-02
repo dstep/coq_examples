@@ -6,7 +6,6 @@ Require Import Omega.
 Require Import Arith.PeanoNat.
 Require Import String.
 
-
 Theorem big_step_induction_helper : forall s:nat, s > 0 -> forall P:nat->Prop, 
   (forall n, n < s -> P n) -> 
   (forall n, P n -> P (n + s)) -> forall n, forall s', s' <= s -> P (n + s').
