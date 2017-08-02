@@ -88,18 +88,17 @@ Section NatToString.
   Program Fixpoint nat_to_str (n:nat) {measure n} : string :=
   match div2 n as n1 with
   | O => String (last_digit n) EmptyString
-  | S n' => (nat_to_str n' (*the proof that n' < n is Obligation 1*)) ++ String (last_digit n) EmptyString
+  | S n' => (nat_to_str (S n') (*the proof that n' < n is Obligation 1*)) ++ String (last_digit n) EmptyString
   end.
 
   (* Proving that n is atually decreases with every recursive call *)
   Obligation 1.
   apply Lt.lt_S_n.
   rewrite Heq_n1.
-  transitivity n.
+  apply Lt.lt_n_S.
   apply div_decreases.
   destruct n.
   inversion Heq_n1.
-  auto.
   auto.
   (* Obligation is solved, so program can now be accepted by Coq *)
   Defined.
@@ -122,7 +121,12 @@ Definition Printf (s:string) := Printf_ s ""%string.
 Eval compute in (Printf "My format string: % % %" "test" "q" "w")%string.
 (* = "My format string: test q w" *)
 Eval compute in (Printf "Current year is # and I'm # years old" (2017) (2017-1991))%string.
-(*= "Current year is 1111100011 and I'm 1100 years old"*)
+(*= "Current year is 11111100001 and I'm 11010 years old"*)
+
+Require Import Coq.extraction.ExtrHaskellNatInteger.
+Require Import Coq.extraction.ExtrHaskellString.
+Require Import Coq.extraction.ExtrHaskellBasic.
+
 
 Extraction Language Haskell.
 Extraction "Printf.hs" Printf.
